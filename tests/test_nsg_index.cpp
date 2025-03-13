@@ -5,20 +5,32 @@
 #include <efanna2e/index_nsg.h>
 #include <efanna2e/util.h>
 
-int main(int argc, char** argv) {
-  if (argc != 7) {
-    std::cout << argv[0] << " data_file nn_graph_path L R C save_graph_file"
+int main(int argc, char **argv)
+{
+  if (argc != 7)
+  {
+    std::cout << argv[0] << " <fvecs/fbin> data_file nn_graph_path L R C save_graph_file"
               << std::endl;
     exit(-1);
   }
-  float* data_load = NULL;
+  float *data_load = NULL;
   unsigned points_num, dim;
-  efanna2e::load_fvecs(argv[1], data_load, points_num, dim);
-
-  std::string nn_graph_path(argv[2]);
-  unsigned L = (unsigned)atoi(argv[3]);
-  unsigned R = (unsigned)atoi(argv[4]);
-  unsigned C = (unsigned)atoi(argv[5]);
+  if (strcmp(argv[1], "fvecs") == 0)
+  {
+    efanna2e::load_fvecs(argv[2], data_load, points_num, dim);
+  }
+  else if (strcmp(argv[1], "fbin") == 0)
+  {
+    efanna2e::load_fbin(argv[2], data_load, points_num, dim);
+  }
+  else
+  {
+    std::cout << "Unsupport data type: " << argv[1] << std::endl;
+  }
+  std::string nn_graph_path(argv[3]);
+  unsigned L = (unsigned)atoi(argv[4]);
+  unsigned R = (unsigned)atoi(argv[5]);
+  unsigned C = (unsigned)atoi(argv[6]);
 
   // data_load = efanna2e::data_align(data_load, points_num, dim);//one must
   // align the data before build
@@ -37,6 +49,7 @@ int main(int argc, char** argv) {
 
   std::cout << "indexing time: " << diff.count() << "\n";
   index.Save(argv[6]);
+  delete[] data_load;
 
   return 0;
 }

@@ -81,11 +81,11 @@ Firstly, we need to prepare a kNN graph.
 * kNN graph building with nndescent:    
 ```shell
 cd build/tests/
-./test_nndescent data_file save_graph K L iter S R
+./test_nndescent data_type data_path save_path K L iter S R
 ```
- 
-+ `data_file` is the path of the origin data.
-+ `save_graph` is the path of the kNN graph to be saved.
++ `data_type` is the type of the origin data, must be `fvecs` or `fbin`.
++ `data_path` is the path of the origin data.
++ `save_path` is the path of the kNN graph to be saved.
 + `K` is the 'K' of kNN graph.
 + `L` is the parameter controlling the graph quality, larger is more accurate but slower, no smaller than K.
 + `iter` is the parameter controlling the iteration times, iter usually < 30.
@@ -99,15 +99,15 @@ Secondly, we will convert the kNN graph to our NSG index.
 You can use our demo code to achieve this converstion as follows:
 ```shell
 cd build/tests/
-./test_nsg_index DATA_PATH KNNG_PATH L R C NSG_PATH
+./test_nsg_index data_type data_path knng_path L R C nsg_path
 ```
-
-+ `DATA_PATH` is the path of the base data in `fvecs` format.
-+ `KNNG_PATH` is the path of the pre-built kNN graph in *Step 1.*.
++ `data_type` is the type of the origin data, must be `fvecs` or `fbin`.
++ `data_path` is the path of the base data in `fvecs` format.
++ `knng_path` is the path of the pre-built kNN graph in *Step 1.*.
 + `L` controls the quality of the NSG, the larger the better.
 + `R` controls the index size of the graph, the best R is related to the intrinsic dimension of the dataset.
 + `C` controls the maximum candidate pool size during NSG contruction.
-+ `NSG_PATH` is the path of the generated NSG index.
++ `nsg_path` is the path of the generated NSG index.
 
 ### Searching via NSG Index
 
@@ -116,22 +116,23 @@ Here are the instructions of how to use NSG index for searching.
 You can use our demo code to perform kNN searching as follows:
 ```shell
 cd build/tests/
-./test_nsg_search DATA_PATH QUERY_PATH NSG_PATH SEARCH_L SEARCH_K RESULT_PATH
+./test_nsg_search data_type data_path query_path nsg_path search_l search_k result_path
 ```
 
-+ `DATA_PATH` is the path of the base data in `fvecs` format.
-+ `QUERY_PATH` is the path of the query data in `fvecs` format.
-+ `NSG_PATH` is the path of the pre-built NSG index in previous section.
-+ `SEARCH_L` controls the quality of the search results, the larger the better but slower. The `SEARCH_L` cannot be samller than the `SEARCH_K`
-+ `SEARCH_K` controls the number of result neighbors we want to query.
-+ `RESULT_PATH` is the query results in `ivecs` format.
++ `data_type` is the type of the origin data, must be `fvecs` or `fbin`.
++ `data_path` is the path of the base data in `fvecs` format.
++ `query_path` is the path of the query data in `fvecs` format.
++ `nsg_path` is the path of the pre-built NSG index in previous section.
++ `search_l` controls the quality of the search results, the larger the better but slower. The `search_l` cannot be samller than the `search_k`
++ `search_k` controls the number of result neighbors we want to query.
++ `result_path` is the path of search results in `ivecs` format.
 
 The `test_nsg_optimized_search` method decomposes the Euclidean distance formula and precomputes the norm of the original vectors. This approach optimizes the distance calculation by reducing it to a simple dot product operation, which can potentially speed up the computation in certain scenarios. However, this method comes with trade-offs, including additional memory usage and increased runtime overhead. Therefore, we generally do not recommend using this approach.
 
 
 ```shell
 cd build/tests/
-./test_nsg_optimized_search DATA_PATH QUERY_PATH NSG_PATH SEARCH_L SEARCH_K RESULT_PATH
+./test_nsg_optimized_search data_path query_path nsg_path search_l search_k result_path
 ```
 
 ***NOTE:** Only data-type int32 and float32 are supported for now.*

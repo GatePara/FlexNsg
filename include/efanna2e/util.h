@@ -103,6 +103,30 @@ namespace efanna2e
     in.close();
   }
 
+  inline void load_fbin(char *filename, float *&data, unsigned &num, unsigned &dim)
+  { // load data with fbin pattern
+    std::ifstream in(filename, std::ios::binary);
+    if (!in.is_open())
+    {
+      std::cerr << "Error: Unable to open file " << filename << " for reading" << std::endl;
+      exit(-1);
+    }
+    in.read((char *)&num, 4);
+    in.read((char *)&dim, 4);
+
+    uint64_t dim_64 = dim;
+    uint64_t num_64 = num;
+
+    data = new float[num_64 * dim_64];
+
+    in.seekg(0, std::ios::beg);
+    for (uint64_t i = 0; i < num_64; i++)
+    {
+      in.read((char *)(data + i * dim_64), dim_64 * 4);
+    }
+    in.close();
+  }
+
   inline void save_result(char *filename, std::vector<std::vector<unsigned>> &results)
   {
     std::ofstream out(filename, std::ios::binary | std::ios::out);
