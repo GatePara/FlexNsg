@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv)
 {
-  if (argc != 7)
+  if (argc != 8)
   {
     std::cout << argv[0] << " <fvecs/fbin> data_file nn_graph_path L R C save_graph_file"
               << std::endl;
@@ -27,6 +27,8 @@ int main(int argc, char **argv)
   {
     std::cout << "Unsupport data type: " << argv[1] << std::endl;
   }
+  std::cout << "points_num: " << points_num << " dim: " << dim << std::endl;
+
   std::string nn_graph_path(argv[3]);
   unsigned L = (unsigned)atoi(argv[4]);
   unsigned R = (unsigned)atoi(argv[5]);
@@ -43,6 +45,7 @@ int main(int argc, char **argv)
   paras.Set<unsigned>("C", C);
   paras.Set<std::string>("nn_graph_path", nn_graph_path);
 
+  std::cout << "start building" << std::endl;
   index.Build(points_num, data_load, paras);
   auto e = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> diff = e - s;

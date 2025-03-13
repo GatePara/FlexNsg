@@ -469,8 +469,14 @@ namespace efanna2e
         std::cout<<progress++ <<"/"<< percent << " completed" << std::endl;
         }
         */
+        if (n % 100000 == 0)
+        {
+          std::cout << "\r" << (100.0 * n) / (nd_) << "% of index linking completed."
+                    << std::flush;
+        }
       }
     }
+    std::cout << std::endl;
 
 #pragma omp for schedule(dynamic, 100)
     for (unsigned n = 0; n < nd_; ++n)
@@ -487,6 +493,7 @@ namespace efanna2e
     data_ = data;
     init_graph(parameters);
     SimpleNeighbor *cut_graph_ = new SimpleNeighbor[nd_ * (size_t)range];
+    std::cout << "link" << std::endl;
     Link(parameters, cut_graph_);
     final_graph_.resize(nd_);
 
@@ -507,7 +514,7 @@ namespace efanna2e
         final_graph_[i][j] = pool[j].id;
       }
     }
-
+    std::cout << "tree grow" << std::endl;
     tree_grow(parameters);
 
     unsigned max = 0, min = 1e6, avg = 0;
