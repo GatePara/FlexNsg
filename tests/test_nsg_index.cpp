@@ -1,7 +1,3 @@
-//
-// Created by 付聪 on 2017/6/21.
-//
-
 #include <efanna2e/index_nsg.h>
 #include <efanna2e/util.h>
 
@@ -13,6 +9,22 @@ int main(int argc, char **argv)
               << std::endl;
     exit(-1);
   }
+
+  std::string nn_graph_path(argv[3]);
+  unsigned L = (unsigned)atoi(argv[4]);
+  unsigned R = (unsigned)atoi(argv[5]);
+  unsigned C = (unsigned)atoi(argv[6]);
+
+  std::cout << "===== Input Parameters =====" << std::endl;
+  std::cout << "Data Type      : " << argv[1] << std::endl;
+  std::cout << "Data File      : " << argv[2] << std::endl;
+  std::cout << "NN Graph Path  : " << argv[3] << std::endl;
+  std::cout << "L              : " << L << std::endl;
+  std::cout << "R              : " << R << std::endl;
+  std::cout << "C              : " << C << std::endl;
+  std::cout << "Output Index   : " << argv[7] << std::endl;
+  std::cout << "============================" << std::endl;
+
   float *data_load = NULL;
   unsigned points_num, dim;
   if (strcmp(argv[1], "fvecs") == 0)
@@ -28,11 +40,6 @@ int main(int argc, char **argv)
     std::cout << "Unsupport data type: " << argv[1] << std::endl;
   }
   std::cout << "points_num: " << points_num << " dim: " << dim << std::endl;
-
-  std::string nn_graph_path(argv[3]);
-  unsigned L = (unsigned)atoi(argv[4]);
-  unsigned R = (unsigned)atoi(argv[5]);
-  unsigned C = (unsigned)atoi(argv[6]);
 
   // data_load = efanna2e::data_align(data_load, points_num, dim);//one must
   // align the data before build
@@ -51,7 +58,7 @@ int main(int argc, char **argv)
   std::chrono::duration<double> diff = e - s;
 
   std::cout << "indexing time: " << diff.count() << "\n";
-  index.Save(argv[6]);
+  index.Save(argv[7]);
   delete[] data_load;
 
   return 0;

@@ -475,13 +475,29 @@ namespace efanna2e
                     << std::flush;
         }
       }
-    }
-    std::cout << std::endl;
 
+      if (omp_get_thread_num() == 0)
+      {
+        if (nd_ % 100000 != 0)
+          std::cout << "\r100% of index linking completed." << std::flush;
+        std::cout << std::endl;
+      }
 #pragma omp for schedule(dynamic, 100)
-    for (unsigned n = 0; n < nd_; ++n)
-    {
-      InterInsert(n, range, locks, cut_graph_);
+      for (unsigned n = 0; n < nd_; ++n)
+      {
+        InterInsert(n, range, locks, cut_graph_);
+        if (n % 100000 == 0)
+        {
+          std::cout << "\r" << (100.0 * n) / (nd_) << "% of index inter inserting completed."
+                    << std::flush;
+        }
+      }
+      if (omp_get_thread_num() == 0)
+      {
+        if (nd_ % 100000 != 0)
+          std::cout << "\r100% of index inter inserting completed." << std::flush;
+        std::cout << std::endl;
+      }
     }
   }
 
