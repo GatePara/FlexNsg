@@ -11,6 +11,9 @@
 #include <fstream>
 #include <cstdlib>
 #include <iomanip>
+#include "assert.h"
+#include <vector>
+#include <set>
 #ifdef __APPLE__
 #else
 #include <malloc.h>
@@ -119,12 +122,88 @@ namespace efanna2e
 
     data = new float[num_64 * dim_64];
 
-    in.seekg(0, std::ios::beg);
     for (uint64_t i = 0; i < num_64; i++)
     {
       in.read((char *)(data + i * dim_64), dim_64 * 4);
     }
     in.close();
+  }
+
+  inline void load_diskann_gt(char *filename, std::vector<std::vector<uint32_t>> &gt)
+  {
+    std::ifstream in(filename, std::ios::binary);
+    if (!in.is_open())
+    {
+      std::cerr << "Error: Unable to open file " << filename << " for reading" << std::endl;
+      exit(-1);
+    }
+    uint32_t num, dim;
+    in.read((char *)&num, 4);
+    in.read((char *)&dim, 4);
+
+    uint64_t num_64 = num;
+    uint64_t dim_64 = dim;
+
+    gt.resize(num_64);
+    for (uint64_t i = 0; i < num_64; i++)
+    {
+      gt[i].resize(dim_64);
+      in.read((char *)(gt[i].data()), dim_64 * sizeof(uint32_t));
+    }
+    in.close();
+  }
+
+  inline void load_ivecs_gt(char *filename, std::vector<std::vector<uint32_t>> &gt)
+  {
+    std::ifstream in(filename, std::ios::binary);
+    if (!in.is_open())
+    {
+      std::cerr << "Error: Unable to open file " << filename << " for reading" << std::endl;
+      exit(-1);
+    }
+    uint32_t num, dim;
+    in.read((char *)&dim, 4);
+    in.seekg(0, std::ios::end);
+    uint64_t dim_64 = dim;
+    std::ios::pos_type ss = in.tellg();
+    size_t fsize = (size_t)ss;
+    uint64_t num_64 = (size_t)(fsize / (dim_64 + 1) / 4);
+    num = num_64;
+    gt.resize(num_64);
+    in.seekg(0, std::ios::beg);
+    for (uint64_t i = 0; i < num_64; i++)
+    {
+      in.seekg(4, std::ios::cur);
+      gt[i].resize(dim_64);
+      in.read((char *)(gt[i].data()), dim_64 * sizeof(uint32_t));
+    }
+    in.close();
+  }
+
+  inline double compute_recall(const std::vector<std::vector<uint32_t>> &results, const std::vector<std::vector<uint32_t>> &gt)
+  {
+    std::set<uint32_t> gt_set, res_set;
+    unsigned K = (unsigned)results[0].size();
+    double total_recall = 0;
+    for (size_t i = 0; i < results.size(); i++)
+    {
+      gt_set.clear();
+      res_set.clear();
+      gt_set.insert(gt[i].begin(), gt[i].begin() + K);
+      res_set.insert(results[i].begin(), results[i].begin() + K);
+      unsigned common = 0;
+      for (auto it = res_set.begin(); it != res_set.end(); it++)
+      {
+        if (gt_set.find(*it) != gt_set.end())
+        {
+          common++;
+        }
+      }
+      total_recall += common;
+      auto this_recall = (double)common / K;
+    }
+    // double recall = total_recall / (results.size() * K);
+    return total_recall;
   }
 
   inline void save_result(char *filename, std::vector<std::vector<unsigned>> &results)

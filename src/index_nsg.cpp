@@ -71,7 +71,7 @@ namespace efanna2e
       final_graph_.push_back(tmp);
     }
     cc /= nd_;
-    // std::cout<<cc<<std::endl;
+    std::cout<<cc<<std::endl;
   }
   void IndexNSG::Load_nn_graph(const char *filename)
   {
