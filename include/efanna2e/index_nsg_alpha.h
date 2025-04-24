@@ -1,5 +1,4 @@
-#ifndef EFANNA2E_INDEX_NSG_H
-#define EFANNA2E_INDEX_NSG_H
+#pragma once
 
 #include "util.h"
 #include "parameters.h"
@@ -9,18 +8,17 @@
 #include <unordered_map>
 #include <string>
 #include <sstream>
-// #include <boost/dynamic_bitset.hpp>
 #include <stack>
 
 namespace efanna2e
 {
 
-    class IndexNSG : public Index
+    class IndexNSGAlpha : public Index
     {
     public:
-        explicit IndexNSG(const size_t dimension, const size_t n, Metric m, Index *initializer);
+        explicit IndexNSGAlpha(const size_t dimension, const size_t n, Metric m, Index *initializer);
 
-        virtual ~IndexNSG();
+        virtual ~IndexNSGAlpha();
 
         virtual void Save(const char *filename) override;
         virtual void Load(const char *filename) override;
@@ -39,8 +37,6 @@ namespace efanna2e
             const Parameters &parameters,
             unsigned *indices);
         void OptimizeGraph(float *data);
-        void ResetCount();
-        std::pair<uint32_t,uint32_t> GetCount();
 
     protected:
         typedef std::vector<std::vector<unsigned>> CompactGraph;
@@ -80,9 +76,5 @@ namespace efanna2e
         size_t data_len;
         size_t neighbor_len;
         KNNGraph nnd_graph;
-        std::atomic<uint32_t> dco_{0};
-        std::atomic<uint32_t> hops_{0};
     };
 }
-
-#endif // EFANNA2E_INDEX_NSG_H

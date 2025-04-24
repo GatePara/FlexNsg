@@ -107,14 +107,15 @@ int main(int argc, char **argv)
     std::cerr << "Error: Unable to open file " << argv[7] << " for writing" << std::endl;
     exit(-1);
   }
-  out << "K,L,Time,Query_num,QPS,Recall" << std::endl;
+  out << "K,L,Time,Query_num,QPS,Recall,Dco,Hops" << std::endl;
   efanna2e::Parameters paras;
-  unsigned repeat_times = 5;
+  unsigned repeat_times = 3;
   std::vector<std::vector<unsigned>> res(query_num, std::vector<unsigned>(K, 0));
   for (auto L : Ls)
   {
     paras.Set<unsigned>("L_search", L);
     paras.Set<unsigned>("P_search", L);
+    index.ResetCount();
     auto s = std::chrono::high_resolution_clock::now();
     for (unsigned repeat = 0; repeat < repeat_times; repeat++)
     {
@@ -129,13 +130,19 @@ int main(int argc, char **argv)
     double query_time = diff.count() / (double)repeat_times;
     double qps = (double)query_num / query_time;
     double recall = efanna2e::compute_recall(res, gt);
+    auto counts = index.GetCount();
+
+    auto dco = counts.first / repeat_times / query_num;
+    auto hops = counts.second / repeat_times / query_num;
 
     out << K << ","
         << L << ","
         << query_time << ","
         << query_num << ","
         << qps << ","
-        << recall
+        << recall << ","
+        << dco << ","
+        << hops
         << std::endl;
   }
   out.close();

@@ -202,8 +202,8 @@ namespace efanna2e
       total_recall += common;
       auto this_recall = (double)common / K;
     }
-    // double recall = total_recall / (results.size() * K);
-    return total_recall;
+    double recall = total_recall / (results.size() * K);
+    return recall;
   }
 
   inline void save_result(char *filename, std::vector<std::vector<unsigned>> &results)

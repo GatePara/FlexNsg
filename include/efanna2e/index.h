@@ -7,6 +7,7 @@
 #ifndef EFANNA2E_INDEX_H
 #define EFANNA2E_INDEX_H
 
+#include <atomic>
 #include <cstddef>
 #include <string>
 #include <vector>

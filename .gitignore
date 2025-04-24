@@ -7,3 +7,7 @@ index/
 *.nsg
 *.log
 *.out
+*.csv
+
+scripts/
+logs/
