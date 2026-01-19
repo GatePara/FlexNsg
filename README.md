@@ -102,7 +102,7 @@ cd build/tests/
 ./test_nsg_index data_type data_path knng_path L R C nsg_path
 ```
 + `data_type` is the type of the origin data, must be `fvecs` or `fbin`.
-+ `data_path` is the path of the base data in `fvecs` format.
++ `data_path` is the path of the origin data.
 + `knng_path` is the path of the pre-built kNN graph in *Step 1.*.
 + `L` controls the quality of the NSG, the larger the better.
 + `R` controls the index size of the graph, the best R is related to the intrinsic dimension of the dataset.
